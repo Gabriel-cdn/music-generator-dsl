@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:tool="http://www.eclipse.org/sirius/diagram/description/tool/1.1.0" xmlns:tool_1="http://www.eclipse.org/sirius/description/tool/1.1.0" name="musicgenerator" version="12.0.0.2017041100">
+  <ownedViewpoints name="MyViewpoint">
+    <ownedRepresentations xsi:type="description_1:DiagramDescription" name="composition Diagram" domainClass="musicgenerator::Composition" enablePopupBars="true">
+      <metamodel href="../../musicgenerator/model/musicgenerator.ecore#/"/>
+      <defaultLayer name="Default">
+        <nodeMappings name="info" domainClass="musicgenerator::Info">
+          <style xsi:type="style:SquareDescription" labelPosition="node" resizeKind="NSEW" width="10" height="3">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="structure " semanticCandidatesExpression="aql:musicgenerator::Structure" domainClass="musicgenerator::Structure">
+          <style xsi:type="style:SquareDescription" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="rhythm" semanticCandidatesExpression="aql: musicgenerator::Rhythm" domainClass="musicgenerator::Rhythm"/>
+        <toolSections>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="creatInfo" nodeMappings="//@ownedViewpoints[name='MyViewpoint']/@ownedRepresentations[name='composition%20Diagram']/@defaultLayer/@nodeMappings[name='info']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="musicgenerator::Info" referenceName="info">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="My Composition"/>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="createStruture" nodeMappings="//@ownedViewpoints[name='MyViewpoint']/@ownedRepresentations[name='composition%20Diagram']/@defaultLayer/@nodeMappings[name='structure%20']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="musicgenerator::Structure" referenceName="structure"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+        </toolSections>
+      </defaultLayer>
+    </ownedRepresentations>
+    <ownedJavaExtensions qualifiedClassName="musicgenerator.design.Services"/>
+  </ownedViewpoints>
+</description:Group>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/musicgenerator/src" modelPluginID="musicgenerator"
+    modelName="Musicgenerator" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>musicgenerator.ecore</foreignModel>
+  <genPackages prefix="Musicgenerator" disposableProviderFactory="true" ecorePackage="musicgenerator.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="musicgenerator.ecore#//Emojis">
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Emojis/Happy"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Emojis/Smiling"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Emojis/Cool"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Emojis/Silent"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Emojis/Surprise"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Emojis/Heart"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="musicgenerator.ecore#//Instruments">
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Instruments/Sax"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Instruments/Piano"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Instruments/Violin"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Instruments/Guitar"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Instruments/Game"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Instruments/Techno"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Instruments/Saw"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="musicgenerator.ecore#//Styles">
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Styles/None"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Styles/Rock_and_Roll"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Styles/Jailhouse_Rock"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Styles/Disco"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Styles/Funk"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Styles/Hip_Hop"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Styles/Samba"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Styles/Heavy_Metal"/>
+      <genEnumLiterals ecoreEnumLiteral="musicgenerator.ecore#//Styles/Reggae"/>
+    </genEnums>
+    <genClasses ecoreClass="musicgenerator.ecore#//Composition">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference musicgenerator.ecore#//Composition/structure"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference musicgenerator.ecore#//Composition/parts"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference musicgenerator.ecore#//Composition/rhythm"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference musicgenerator.ecore#//Composition/info"/>
+    </genClasses>
+    <genClasses ecoreClass="musicgenerator.ecore#//Part">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Part/title"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference musicgenerator.ecore#//Part/verse"/>
+    </genClasses>
+    <genClasses ecoreClass="musicgenerator.ecore#//Verse">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Verse/emoticon"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Verse/harmony"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Verse/melody"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Verse/id_verse"/>
+    </genClasses>
+    <genClasses ecoreClass="musicgenerator.ecore#//Structure">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference musicgenerator.ecore#//Structure/part"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Structure/verseSize"/>
+    </genClasses>
+    <genClasses ecoreClass="musicgenerator.ecore#//Parts">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference musicgenerator.ecore#//Parts/part"/>
+    </genClasses>
+    <genClasses ecoreClass="musicgenerator.ecore#//Rhythm">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Rhythm/compass"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Rhythm/bpm"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Rhythm/Style"/>
+    </genClasses>
+    <genClasses ecoreClass="musicgenerator.ecore#//Info">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Info/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Info/tone"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Info/tonality"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute musicgenerator.ecore#//Info/random_seed"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

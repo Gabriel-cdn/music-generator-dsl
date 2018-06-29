@@ -1,0 +1,354 @@
+# My composition
+use_bpm 60
+use_random_seed 5
+tone = 7
+notes = (ring 0, 2, 4, 5, 7, 9, 11)
+# compass:
+time = 4 
+duration =  4
+step = (2.0)/duration
+map = [6,1,2,5,4,3,0]
+emotions_score_harmony = []
+emotions_score_melody = []
+ 
+# play chord function
+define :mychord do |note,dur,vol|
+  verify = (note-tone)%12
+  form_M = [0,4,7]
+  form_m = [0,3,7]
+  form_dim = [0,6,9,15]
+  if (verify == 2 || verify == 4 || verify == 9)
+    play_notes_formate(note,form_m,dur,vol)
+  elsif (verify == 11)
+    play_notes_formate(note,form_dim,dur,vol)
+  else
+    play_notes_formate(note,form_M,dur,vol)
+  end
+end
+
+define :play_notes_formate do |note,form,dur,vol|
+  t = dur*step
+  i=0
+  5.times do
+    if(form[i]!=nil)
+      play note+form[i], amp: vol, attack: 0.15*t, attack_level: 0.85, decay: 0.35*t, decay_level: 1, sustain: 0.35*t, sustain_level: 0.85, release: 0.15*t
+    end
+    i+=1
+  end
+end
+
+define :play_note_dur do |note,dur,vol|
+  t = dur*step
+  play note, amp: vol, attack: 0.15*t, attack_level: 0.85, decay: 0.35*t, decay_level: 1, sustain: 0.35*t, sustain_level: 0.85, release: 0.15*t
+end
+
+define :get_rand_prob do |min,max,percent,size_prob|
+  med = percent/100.0*(max-min)+min
+  i=0
+  count_sum=0
+  peso = []
+  (max-min+1).times do
+    j=1
+    size_prob.times do
+      if(med-(min+i)<j&&med-(min+i)>-j)
+        peso[i] = 66/(2**j)
+        break
+      end
+      j+=1
+    end
+    if(peso[i]==nil)
+      peso[i]=0
+    end
+    i+=1
+  end
+
+  i=0
+  funct_prob = []
+  (max-min+1).times do
+    peso[i].times do
+      funct_prob += [min+i]
+    end
+    i+=1
+  end
+
+  100.times do
+    funct_prob += [med]
+  end
+
+  return funct_prob[rrand_i(0,100)]
+end
+
+define :play_instruments do |seq,emot,mynote,durat_play,type|
+  i_inst = 0
+  vol = 1
+  loop do
+    my_inst = seq[emot][i_inst]
+    if(my_inst==nil)
+      break
+    end
+    if(my_inst == 'Sax')
+      use_synth :fm
+      vol = 1
+    elsif(my_inst == 'Piano')
+      use_synth :piano
+      vol = 5
+    elsif(my_inst == 'Violin')
+      use_synth :blade
+      vol = 1
+    elsif(my_inst == 'Guitar')
+      use_synth :pluck
+      vol = 3
+    elsif(my_inst == 'Game')
+      use_synth :chiplead
+      vol = 1
+    elsif(my_inst == 'Techno')
+      use_synth :tech_saws
+      vol = 1
+    elsif(my_inst == 'Saw')
+      use_synth :saw
+      vol = 0.5
+    end
+    if(type == 'harmony')
+      mychord(mynote,durat_play,vol)
+    elsif(type == 'melody')
+      play_note_dur(mynote,durat_play,vol)
+    end
+    sleep 0.000000000000000001
+    i_inst+=1
+  end
+end
+
+
+# emotion verse = []
+emo_param = []
+emo_index = []
+emo_param += [[0,25,60,25,0]]
+emo_index += ['8) 1']
+emo_param += [[0,75,30,15,100]]
+emo_index += [':x 1']
+emo_param +=[[50,50,100,60,50]]
+emo_index += [':D 1']
+emo_param += [[50,75,60,60,50]]
+emo_index += ['<3 1']
+
+# generate harmony for each emoticon
+p=0
+loop do
+  emotion_verse = emo_param[p]
+  if(emotion_verse==nil)
+    break
+  end
+  time_count = 0
+  score = []
+  i_score = 0
+  loop do
+    # oitava (agudo)
+    randomescala = get_rand_prob(3,5,emotion_verse[0],1)
+
+    # duracao da nota (calmo)
+    range_dur = (Math.log(time*4)/Math.log(2)).to_i
+    durat_play = get_rand_prob(0,range_dur,emotion_verse[1],time)	# diferenca (1,tim3...)    
+    durat_play = 2**durat_play
+    if(time_count+durat_play>=4*time)
+      durat_play = 4*time - time_count
+    end
+    time_count += durat_play
+    
+    #nota (acordes maiores)
+    randomnota = get_rand_prob(0,6,emotion_verse[2],7)
+    mynote = tone+12+randomescala*12+notes[map[randomnota.to_i]]
+    puts 'note:', mynote, '(',durat_play,')'
+    score[i_score]=[]
+    score[i_score][0]=mynote
+    score[i_score][1]=durat_play
+    sleep 0.00000000001
+    i_score+=1
+    if(time_count>=4*time)
+      break
+    end
+    
+    # silent (calmo)
+    #durat_silent = get_rand_prob(1,duration/2,emotion_verse[3])
+    #if(time_count+durat_silent>=4*time)
+    #  durat_silent = 4*time - time_count
+    #end
+    #time_count += durat_silent
+    #sleep durat_silent*step
+    #puts 'silent:', durat_silent
+    #if(time_count>=4*time)
+    #  break
+    #end
+  end
+  emotions_score_harmony[p] = score
+  p+=1
+end
+
+# generate melody for each emoticon
+p=0
+loop do
+  emotion_verse = emo_param[p]
+  if(emotion_verse==nil)
+    break
+  end
+  time_count = 0
+  score = []
+  i_score = 0
+  
+  loop do
+    # oitava (agudo)
+    randomescala = get_rand_prob(48+tone,84+tone,emotion_verse[3],14)
+
+    # duracao da nota (calmo)
+    range_dur = (Math.log(time)/Math.log(2)).to_i
+    durat_play = get_rand_prob(0,range_dur,emotion_verse[4],time)	# diferenca (1,tim3...)    
+    durat_play = 2**durat_play
+    if(time_count+durat_play>=4*time)
+      durat_play = 4*time - time_count
+    end
+    time_count += durat_play
+    
+    #nota melodia
+    diff = randomescala
+    if(randomescala<60+tone)
+      diff = diff-48-tone
+      randomescala = 3
+    elsif(randomescala<72+tone)
+      diff = diff-60-tone
+      randomescala = 4
+    else
+      diff = diff-72-tone
+      randomescala = 5
+    end
+    if(notes.index(diff)==nil)
+      diff+=1
+    end
+    mynote = tone+12+randomescala*12+notes[diff.to_i]
+    puts 'note:', mynote, '(',durat_play,')'
+    score[i_score]=[]
+    score[i_score][0]=mynote
+    score[i_score][1]=durat_play
+    sleep 0.00000000001
+    i_score+=1
+    if(time_count>=4*time)
+      break
+    end
+    
+    # silent (calmo)
+    #durat_silent = get_rand_prob(1,duration/2,emotion_verse[3])
+    #if(time_count+durat_silent>=4*time)
+    #  durat_silent = 4*time - time_count
+    #end
+    #time_count += durat_silent
+    #sleep durat_silent*step
+    #puts 'silent:', durat_silent
+    #if(time_count>=4*time)
+    #  break
+    #end
+  end
+  emotions_score_melody[p] = score
+  p+=1
+end
+puts 'score',emotions_score_harmony
+
+go_drum = 1
+# Drums
+in_thread do
+  loop do
+	sample :drum_bass_hard
+    sleep 2*step
+    sample :drum_bass_hard
+    sleep 2*step
+    if(go_drum==0)
+      break
+    end
+  end
+end
+
+in_thread do
+  loop do
+	sleep step
+    sample :drum_snare_hard
+    sleep 2*step
+    sample :drum_snare_hard
+    sleep step
+    if(go_drum==0)
+      break
+    end
+  end
+end
+
+in_thread do
+  loop do
+	sleep step/2
+    sample :drum_cymbal_closed,amp: 1
+    sleep step/4
+    sample :drum_cymbal_open,amp: 0.5
+    sleep step/4
+    if(go_drum==0)
+      break
+    end
+  end
+end
+
+harmony_seq = []
+harmony_seq += [['Sax',]]
+harmony_seq += [['Game',]]
+harmony_seq += [['Piano',]]
+harmony_seq += [['Piano','Guitar',]]
+
+melody_seq = []
+melody_seq += [['Violin',]]
+melody_seq += [['Techno',]]
+melody_seq += [['Guitar',]]
+melody_seq += [['Sax',]]
+
+emotion_seq = [emo_index.index('8) 1'),emo_index.index(':x 1'),emo_index.index(':D 1'),emo_index.index('<3 1'),]
+# execute harmony
+in_thread do
+  i_emot=0
+  loop do
+    emot = emotion_seq[i_emot]
+    tickk=0
+    if(emot!=nil)
+      loop do
+        if(emotions_score_harmony[emot][tickk]==nil)
+          break
+        end
+        mynote = emotions_score_harmony[emot][tickk][0]
+        durat_play = emotions_score_harmony[emot][tickk][1]
+        play_instruments(harmony_seq,i_emot,mynote,durat_play,'harmony')
+        sleep durat_play*step
+        tickk+=1
+      end
+    else
+      go_drum=0
+      break
+    end
+    i_emot+=1
+  end
+end
+
+# execute melody
+in_thread do
+  i_emot=0
+  loop do
+    emot = emotion_seq[i_emot]
+    tickk=0
+    if(emot!=nil)
+      loop do
+        if(emotions_score_melody[emot][tickk]==nil)
+          break
+        end
+        mynote = emotions_score_melody[emot][tickk][0]
+        durat_play = emotions_score_melody[emot][tickk][1]
+        play_instruments(melody_seq,i_emot,mynote,durat_play,'melody')
+        sleep durat_play*step
+        tickk+=1
+      end
+    else
+      break
+    end
+    i_emot+=1
+  end
+end
+

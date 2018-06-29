@@ -1,0 +1,638 @@
+[comment encoding = UTF-8 /]
+[**
+ * The documentation of the module generate.
+ */]
+[module generate('http://musicgenerator')]
+
+
+[**
+ * The documentation of the template generateElement.
+ * @param aComposition
+ */]
+[template public generateElement(aComposition : Composition)]
+[comment @main/]
+[file (aComposition.info.name, false, 'UTF-8')]
+# [aComposition.info.name/]
+[comment variables /]
+use_bpm [aComposition.rhythm.bpm/]
+use_random_seed [aComposition.info.random_seed/]
+	[if (aComposition.info.tone = 'C')]
+tone = 0
+	[elseif ((aComposition.info.tone = 'C#'))]
+tone = 1
+	[elseif ((aComposition.info.tone = 'D'))]
+tone = 2
+	[elseif ((aComposition.info.tone = 'D#'))]
+tone = 3
+	[elseif ((aComposition.info.tone = 'E'))]
+tone = 4
+	[elseif ((aComposition.info.tone = 'F'))]
+tone = 5
+	[elseif ((aComposition.info.tone = 'F#'))]
+tone = 6
+	[elseif ((aComposition.info.tone = 'G'))]
+tone = 7
+	[elseif ((aComposition.info.tone = 'G#'))]
+tone = 8
+	[elseif ((aComposition.info.tone = 'A'))]
+tone = 9
+	[elseif ((aComposition.info.tone = 'A#'))]
+tone = 10
+	[elseif ((aComposition.info.tone = 'B'))]
+tone = 11
+	[/if]
+	[if (aComposition.info.tonality = 'major')]
+notes = (ring 0, 2, 4, 5, 7, 9, 11)
+	[elseif (aComposition.info.tonality = 'minor')]
+notes = (ring 0, 2, 3, 5, 7, 8, 10)
+	[else]
+notes = (ring 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)	
+	[/if]
+# compass:
+time = [aComposition.rhythm.compass.toString().at(1)/] 
+duration =  [aComposition.rhythm.compass.toString().substring(aComposition.rhythm.compass.toString().index('/')+1)/]
+step = ([120.0/aComposition.rhythm.bpm/])/duration
+map = ['['/]6,1,2,5,4,3,0[']'/]
+emotions_score_harmony = ['['/][']'/]
+emotions_score_melody = ['['/][']'/]
+ 
+[comment functions /]
+# play chord function
+define :mychord do |note,dur,vol|
+  verify = (note-tone)%12
+  form_M = ['['/]0,4,7[']'/]
+  form_m = ['['/]0,3,7[']'/]
+  form_dim = ['['/]0,6,9,15[']'/]
+	[if (aComposition.info.tonality = 'major')]
+  if (verify == 2 || verify == 4 || verify == 9)
+    play_notes_formate(note,form_m,dur,vol)
+  elsif (verify == 11)
+    play_notes_formate(note,form_dim,dur,vol)
+  else
+    play_notes_formate(note,form_M,dur,vol)
+  end
+	[elseif (aComposition.info.tonality = 'minor')]
+  if (verify == 0 || verify == 5 || verify == 7)
+    play_notes_formate(note,form_m,dur,vol)
+  elsif (verify == 2)
+    play_notes_formate(note,form_dim,dur,vol)
+  else
+    play_notes_formate(note,form_M,dur,vol)
+  end
+	[/if]
+end
+
+define :play_notes_formate do |note,form,dur,vol|
+  t = dur*step
+  i=0
+  5.times do
+    if(form['['/]i[']'/]!=nil)
+      play note+form['['/]i[']'/], amp: vol, attack: 0.15*t, attack_level: 0.85, decay: 0.35*t, decay_level: 1, sustain: 0.35*t, sustain_level: 0.85, release: 0.15*t
+    end
+    i+=1
+  end
+end
+
+define :play_note_dur do |note,dur,vol|
+  t = dur*step
+  play note, amp: vol, attack: 0.15*t, attack_level: 0.85, decay: 0.35*t, decay_level: 1, sustain: 0.35*t, sustain_level: 0.85, release: 0.15*t
+end
+
+define :get_rand_prob do |min,max,percent,size_prob|
+  med = percent/100.0*(max-min)+min
+  i=0
+  count_sum=0
+  peso = ['['/][']'/]
+  (max-min+1).times do
+    j=1
+    size_prob.times do
+      if(med-(min+i)<j&&med-(min+i)>-j)
+        peso['['/]i[']'/] = 66/(2**j)
+        break
+      end
+      j+=1
+    end
+    if(peso['['/]i[']'/]==nil)
+      peso['['/]i[']'/]=0
+    end
+    i+=1
+  end
+
+  i=0
+  funct_prob = ['['/][']'/]
+  (max-min+1).times do
+    peso['['/]i[']'/].times do
+      funct_prob += ['['/]min+i[']'/]
+    end
+    i+=1
+  end
+
+  100.times do
+    funct_prob += ['['/]med[']'/]
+  end
+
+  return funct_prob['['/]rrand_i(0,100)[']'/]
+end
+
+define :play_instruments do |seq,emot,mynote,durat_play,type|
+  i_inst = 0
+  vol = 1
+  loop do
+    my_inst = seq['['/]emot[']'/]['['/]i_inst[']'/]
+    if(my_inst==nil)
+      break
+    end
+    if(my_inst == 'Sax')
+      use_synth :fm
+      vol = 1
+    elsif(my_inst == 'Piano')
+      use_synth :piano
+      vol = 5
+    elsif(my_inst == 'Violin')
+      use_synth :blade
+      vol = 1
+    elsif(my_inst == 'Guitar')
+      use_synth :pluck
+      vol = 3
+    elsif(my_inst == 'Game')
+      use_synth :chiplead
+      vol = 1
+    elsif(my_inst == 'Techno')
+      use_synth :tech_saws
+      vol = 1
+    elsif(my_inst == 'Saw')
+      use_synth :saw
+      vol = 0.5
+    end
+    if(type == 'harmony')
+      mychord(mynote,durat_play,vol)
+    elsif(type == 'melody')
+      play_note_dur(mynote,durat_play,vol)
+    end
+    sleep 0.000000000000000001
+    i_inst+=1
+  end
+end
+
+[comment 
+emotion verse = H1,H2,H3,M1,M2
+H1: oitava teclado:		3,4,5 
+H2: duracao harmonia:	1,2,4,8,16,32..nverse*time
+H3: acorde tipo:		menores..maiores
+M1: melodia regiao:  	48..52..56..60..64..68..72..76..80..84
+M2: duracao molodia:	1,2,4..time
+E: duracao silencio: ?
+ /]
+
+# emotion verse = ['['/][']'/]
+emo_param = ['['/][']'/]
+emo_index = ['['/][']'/]
+	[for (part : Part | aComposition.structure.part)]
+		[for (verse : Verse | part.verse)]
+			[if (verse.emoticon.toString() = ':)')]
+emo_param += ['['/]['['/]50,30,75,40,50[']'/][']'/]
+emo_index += ['['/]':) [verse.id_verse/]'[']'/]
+			[/if]
+			[if (verse.emoticon.toString() = ':D')]
+emo_param +=['['/]['['/]50,50,100,60,50[']'/][']'/]
+emo_index += ['['/]':D [verse.id_verse/]'[']'/]
+			[/if]
+			[if (verse.emoticon.toString() = '8)')]
+emo_param += ['['/]['['/]0,25,60,25,0[']'/][']'/]
+emo_index += ['['/]'8) [verse.id_verse/]'[']'/]
+			[/if]
+			[if (verse.emoticon.toString() = ':x')]
+emo_param += ['['/]['['/]0,75,30,15,100[']'/][']'/]
+emo_index += ['['/]':x [verse.id_verse/]'[']'/]
+			[/if]
+			[if (verse.emoticon.toString() = ':o')]
+emo_param += ['['/]['['/]100,25,15,75,0[']'/][']'/]
+emo_index += ['['/]':o [verse.id_verse/]'[']'/]
+			[/if]
+			[if (verse.emoticon.toString() = '<3')]
+emo_param += ['['/]['['/]50,75,60,60,50[']'/][']'/]
+emo_index += ['['/]'<3 [verse.id_verse/]'[']'/]
+			[/if]
+		[/for]
+	[/for]
+
+# generate harmony for each emoticon
+p=0
+loop do
+  emotion_verse = emo_param['['/]p[']'/]
+  if(emotion_verse==nil)
+    break
+  end
+  time_count = 0
+  score = ['['/][']'/]
+  i_score = 0
+  loop do
+    # oitava (agudo)
+    randomescala = get_rand_prob(3,5,emotion_verse['['/]0[']'/],1)
+
+    # duracao da nota (calmo)
+    range_dur = (Math.log(time*[aComposition.structure.verseSize/])/Math.log(2)).to_i
+    durat_play = get_rand_prob(0,range_dur,emotion_verse['['/]1[']'/],time)	# diferenca (1,tim3...)    
+    durat_play = 2**durat_play
+    if(time_count+durat_play>=[aComposition.structure.verseSize/]*time)
+      durat_play = [aComposition.structure.verseSize/]*time - time_count
+    end
+    time_count += durat_play
+    
+    #nota (acordes maiores)
+    randomnota = get_rand_prob(0,6,emotion_verse['['/]2[']'/],7)
+    mynote = tone+12+randomescala*12+notes['['/]map['['/]randomnota.to_i[']'/][']'/]
+    puts 'note:', mynote, '(',durat_play,')'
+    score['['/]i_score[']'/]=['['/][']'/]
+    score['['/]i_score[']'/]['['/]0[']'/]=mynote
+    score['['/]i_score[']'/]['['/]1[']'/]=durat_play
+    sleep 0.00000000001
+    i_score+=1
+    if(time_count>=[aComposition.structure.verseSize/]*time)
+      break
+    end
+    
+    # silent (calmo)
+    #durat_silent = get_rand_prob(1,duration/2,emotion_verse['['/]3[']'/])
+    #if(time_count+durat_silent>=[aComposition.structure.verseSize/]*time)
+    #  durat_silent = [aComposition.structure.verseSize/]*time - time_count
+    #end
+    #time_count += durat_silent
+    #sleep durat_silent*step
+    #puts 'silent:', durat_silent
+    #if(time_count>=[aComposition.structure.verseSize/]*time)
+    #  break
+    #end
+  end
+  emotions_score_harmony['['/]p[']'/] = score
+  p+=1
+end
+
+# generate melody for each emoticon
+p=0
+loop do
+  emotion_verse = emo_param['['/]p[']'/]
+  if(emotion_verse==nil)
+    break
+  end
+  time_count = 0
+  score = ['['/][']'/]
+  i_score = 0
+  
+  loop do
+    # oitava (agudo)
+    randomescala = get_rand_prob(48+tone,84+tone,emotion_verse['['/]3[']'/],14)
+
+    # duracao da nota (calmo)
+    range_dur = (Math.log(time)/Math.log(2)).to_i
+    durat_play = get_rand_prob(0,range_dur,emotion_verse['['/]4[']'/],time)	# diferenca (1,tim3...)    
+    durat_play = 2**durat_play
+    if(time_count+durat_play>=[aComposition.structure.verseSize/]*time)
+      durat_play = [aComposition.structure.verseSize/]*time - time_count
+    end
+    time_count += durat_play
+    
+    #nota melodia
+    diff = randomescala
+    if(randomescala<60+tone)
+      diff = diff-48-tone
+      randomescala = 3
+    elsif(randomescala<72+tone)
+      diff = diff-60-tone
+      randomescala = 4
+    else
+      diff = diff-72-tone
+      randomescala = 5
+    end
+    if(notes.index(diff)==nil)
+      diff+=1
+    end
+    mynote = tone+12+randomescala*12+notes['['/]diff.to_i[']'/]
+    puts 'note:', mynote, '(',durat_play,')'
+    score['['/]i_score[']'/]=['['/][']'/]
+    score['['/]i_score[']'/]['['/]0[']'/]=mynote
+    score['['/]i_score[']'/]['['/]1[']'/]=durat_play
+    sleep 0.00000000001
+    i_score+=1
+    if(time_count>=[aComposition.structure.verseSize/]*time)
+      break
+    end
+    
+    # silent (calmo)
+    #durat_silent = get_rand_prob(1,duration/2,emotion_verse['['/]3[']'/])
+    #if(time_count+durat_silent>=[aComposition.structure.verseSize/]*time)
+    #  durat_silent = [aComposition.structure.verseSize/]*time - time_count
+    #end
+    #time_count += durat_silent
+    #sleep durat_silent*step
+    #puts 'silent:', durat_silent
+    #if(time_count>=[aComposition.structure.verseSize/]*time)
+    #  break
+    #end
+  end
+  emotions_score_melody['['/]p[']'/] = score
+  p+=1
+end
+puts 'score',emotions_score_harmony
+
+[comment drums /]
+go_drum = 1
+[if (aComposition.rhythm.Style.toString() = 'Reggae')]
+in_thread do
+  loop do
+    sleep (8-11.0/4)*step
+    sample :drum_cymbal_closed
+    sleep step/4
+    sample :drum_cymbal_closed
+    sleep step/4
+    sample :drum_cymbal_closed
+    sleep 3*step/4
+    sample :drum_cymbal_closed
+    sleep 3*step/4
+    sample :drum_cymbal_closed
+    sleep 3*step/4
+    sleep 8*step
+    if(go_drum==0)
+      break
+    end
+  end
+end
+
+in_thread do
+  sample :drum_splash_soft, amp: 3
+end
+
+in_thread do
+  loop do
+    sample :drum_bass_soft, amp: 3
+    sleep 4*step
+    if(go_drum==0)
+      break
+    end
+  end
+end
+
+in_thread do
+  loop do
+    sleep 2*step
+    sample :drum_snare_hard, amp: 10, rate: 7
+    sleep 2*step
+    if(go_drum==0)
+      break
+    end
+  end
+end
+
+in_thread do
+  loop do
+    sleep 8*step
+    sleep step
+    sample :drum_cymbal_closed
+    sleep step/3
+    sample :drum_cymbal_closed
+    sleep step/3
+    sample :drum_cymbal_closed
+    sleep step/3
+    sample :drum_cymbal_open
+    sleep step
+    sample :drum_cymbal_closed
+    sleep step/2
+    sample :drum_cymbal_pedal
+    sleep step/2
+    sleep step
+    sample :drum_cymbal_closed
+    sleep step/3
+    sample :drum_cymbal_closed
+    sleep step/3
+    sample :drum_cymbal_closed
+    sleep step/3
+    sample :drum_cymbal_open
+    sleep 2*step
+    if(go_drum==0)
+      break
+    end
+  end
+end
+[elseif (aComposition.rhythm.Style.toString() <> 'None')]
+# Drums
+in_thread do
+  loop do
+	[if (aComposition.rhythm.Style.toString() = 'Rock_and_Roll')]
+	sample :drum_bass_hard
+    sleep 2*step
+    sample :drum_bass_hard
+    sleep 2*step
+	[elseif (aComposition.rhythm.Style.toString() = 'Jailhouse_Rock')]
+	sample :drum_bass_hard
+    sleep 2*step
+    sample :drum_bass_hard
+    sleep step/2
+    sample :drum_bass_hard
+    sleep 3*step/2	
+    [elseif (aComposition.rhythm.Style.toString() = 'Disco')]
+	sample :drum_bass_hard
+    sleep 2*step
+    sample :drum_bass_hard
+    sleep 2*step
+    [elseif (aComposition.rhythm.Style.toString() = 'Funk')]
+	sample :drum_bass_hard, amp: 3
+    sleep step/2
+    sample :drum_bass_hard, amp: 3
+    sleep 2*step
+    sample :drum_bass_hard, amp: 3
+    sleep 3*step/2
+    [elseif (aComposition.rhythm.Style.toString() = 'Hip_Hop')]
+	sample :drum_bass_hard, amp: 3
+    sleep 3*step/2
+    sample :drum_bass_hard, amp: 3
+    sleep step
+    sample :drum_bass_hard, amp: 3
+    sleep 3*step/2
+    [elseif (aComposition.rhythm.Style.toString() = 'Samba')]
+	sample :drum_bass_hard, amp: 3
+    sleep step/2
+    sample :drum_bass_hard, amp: 3
+    sleep 3*step/2
+    [elseif (aComposition.rhythm.Style.toString() = 'Heavy_Metal')]
+	sample :drum_bass_hard, amp: 3
+    sleep step/2
+	[/if]
+    if(go_drum==0)
+      break
+    end
+  end
+end
+
+in_thread do
+  loop do
+	[if (aComposition.rhythm.Style.toString() = 'Rock_and_Roll')]
+	sleep step
+    sample :drum_snare_hard
+    sleep 2*step
+    sample :drum_snare_hard
+    sleep step
+	[elseif (aComposition.rhythm.Style.toString() = 'Jailhouse_Rock')]
+	sleep step
+    sample :drum_snare_hard
+    sleep 2*step
+    sample :drum_snare_hard
+    sleep step
+	[elseif (aComposition.rhythm.Style.toString() = 'Disco')]
+	sleep step
+    sample :drum_snare_hard
+    sleep 2*step
+    sample :drum_snare_hard
+    sleep step
+	[elseif (aComposition.rhythm.Style.toString() = 'Funk')]
+	sleep step
+    sample :drum_snare_hard
+    sleep 3*step/4
+    sample :drum_snare_hard
+    sleep step/2
+    sample :drum_snare_hard
+    sleep 3*step/4
+    sample :drum_snare_hard
+    sleep step
+    [elseif (aComposition.rhythm.Style.toString() = 'Hip_Hop')]
+	sleep step
+    sample :drum_snare_hard
+    sleep 2*step
+    sample :drum_snare_hard
+    sleep step
+    [elseif (aComposition.rhythm.Style.toString() = 'Samba')]
+	sleep step/2
+    sample :drum_snare_hard
+    sleep step
+    sample :drum_snare_hard
+    sleep step
+    sample :drum_snare_hard
+    sleep 3*step/2
+    sample :drum_snare_hard
+    sleep step
+    sample :drum_snare_hard
+    sleep step
+    sample :drum_snare_hard
+    sleep step
+    sample :drum_snare_hard
+    sleep step
+    [elseif (aComposition.rhythm.Style.toString() = 'Heavy_Metal')]
+	sample :drum_bass_hard, amp: 3
+    sleep 2*step
+    sample :drum_snare_hard, amp: 3
+    sleep 2*step
+	[/if]
+    if(go_drum==0)
+      break
+    end
+  end
+end
+
+in_thread do
+  loop do
+	[if (aComposition.rhythm.Style.toString() = 'Rock_and_Roll')]
+	sample :drum_cymbal_open,amp:0.5
+    sleep step/2
+	[elseif (aComposition.rhythm.Style.toString() = 'Jailhouse_Rock')]
+	sample :drum_cymbal_open,amp:0.5
+    sleep step/2
+	[elseif (aComposition.rhythm.Style.toString() = 'Disco')]
+	sleep step/2
+    sample :drum_cymbal_closed,amp: 1
+    sleep step/4
+    sample :drum_cymbal_open,amp: 0.5
+    sleep step/4
+	[elseif (aComposition.rhythm.Style.toString() = 'Disco')]
+    sleep step/2
+    sample :drum_cymbal_closed
+    sleep step/2
+    sample :drum_cymbal_closed
+    [elseif (aComposition.rhythm.Style.toString() = 'Hip_Hop')]
+    sleep step/2
+    sample :drum_cymbal_closed
+    sleep step/2
+    sample :drum_cymbal_closed
+    [elseif (aComposition.rhythm.Style.toString() = 'Samba')]
+	sleep 3*step/2
+    sample :drum_cymbal_closed
+    sleep step/2
+    sample :drum_cymbal_closed
+    [elseif (aComposition.rhythm.Style.toString() = 'Heavy_Metal')]
+    sample :drum_cymbal_closed
+    sleep step
+	[/if]
+    if(go_drum==0)
+      break
+    end
+  end
+end
+[/if]
+
+[comment get harmonies /]
+harmony_seq = ['['/][']'/]
+	[for (part : Part | aComposition.structure.part)]
+		[for (verse : Verse | part.verse)]
+harmony_seq += ['['/]['['/][for (instrument : Instruments | verse.harmony)]'[instrument/]',[/for][']'/][']'/]
+		[/for]
+	[/for]
+
+[comment get melodies/]
+melody_seq = ['['/][']'/]
+	[for (part : Part | aComposition.structure.part)]
+		[for (verse : Verse | part.verse)]
+melody_seq += ['['/]['['/][for (instrument : Instruments | verse.melody)]'[instrument/]',[/for][']'/][']'/]
+		[/for]
+	[/for]
+
+[comment execute score/]
+emotion_seq = ['['/][for (part : Part | aComposition.structure.part)][for (verse : Verse | part.verse)]emo_index.index('[verse.emoticon/] [verse.id_verse/]'),[/for][/for][']'/]
+# execute harmony
+in_thread do
+  i_emot=0
+  loop do
+    emot = emotion_seq['['/]i_emot[']'/]
+    tickk=0
+    if(emot!=nil)
+      loop do
+        if(emotions_score_harmony['['/]emot[']'/]['['/]tickk[']'/]==nil)
+          break
+        end
+        mynote = emotions_score_harmony['['/]emot[']'/]['['/]tickk[']'/]['['/]0[']'/]
+        durat_play = emotions_score_harmony['['/]emot[']'/]['['/]tickk[']'/]['['/]1[']'/]
+        play_instruments(harmony_seq,i_emot,mynote,durat_play,'harmony')
+        sleep durat_play*step
+        tickk+=1
+      end
+    else
+      go_drum=0
+      break
+    end
+    i_emot+=1
+  end
+end
+
+# execute melody
+in_thread do
+  i_emot=0
+  loop do
+    emot = emotion_seq['['/]i_emot[']'/]
+    tickk=0
+    if(emot!=nil)
+      loop do
+        if(emotions_score_melody['['/]emot[']'/]['['/]tickk[']'/]==nil)
+          break
+        end
+        mynote = emotions_score_melody['['/]emot[']'/]['['/]tickk[']'/]['['/]0[']'/]
+        durat_play = emotions_score_melody['['/]emot[']'/]['['/]tickk[']'/]['['/]1[']'/]
+        play_instruments(melody_seq,i_emot,mynote,durat_play,'melody')
+        sleep durat_play*step
+        tickk+=1
+      end
+    else
+      break
+    end
+    i_emot+=1
+  end
+end
+
+[/file]
+[/template]

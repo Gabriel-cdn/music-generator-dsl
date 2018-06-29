@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<musicgenerator:Composition
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:musicgenerator="http://musicgenerator"
+    xsi:schemaLocation="http://musicgenerator musicgenerator.ecore">
+  <structure
+      part="//@parts/@part.2"/>
+  <parts>
+    <part title="1">
+      <verse>
+        <harmony>Piano</harmony>
+        <melody>Violin</melody>
+      </verse>
+      <verse
+          emoticon=":D">
+        <harmony>Piano</harmony>
+        <melody>Violin</melody>
+      </verse>
+      <verse
+          emoticon="8)">
+        <harmony>Piano</harmony>
+        <melody>Violin</melody>
+      </verse>
+      <verse
+          emoticon=":x">
+        <harmony>Piano</harmony>
+        <melody>Violin</melody>
+      </verse>
+      <verse
+          emoticon=":o">
+        <harmony>Piano</harmony>
+        <melody>Violin</melody>
+      </verse>
+      <verse
+          emoticon="&lt;3">
+        <harmony>Piano</harmony>
+        <melody>Violin</melody>
+      </verse>
+    </part>
+    <part title="2">
+      <verse
+          emoticon="&lt;3">
+        <harmony>Piano</harmony>
+        <melody>Violin</melody>
+      </verse>
+      <verse
+          emoticon="&lt;3"
+          id_verse="2">
+        <harmony>Piano</harmony>
+        <melody>Violin</melody>
+      </verse>
+      <verse
+          emoticon="&lt;3"
+          id_verse="3">
+        <harmony>Piano</harmony>
+        <melody>Violin</melody>
+      </verse>
+      <verse
+          emoticon="&lt;3"
+          id_verse="4">
+        <harmony>Piano</harmony>
+        <melody>Violin</melody>
+      </verse>
+    </part>
+    <part title="My Part">
+      <verse
+          emoticon="8)">
+        <melody>Techno</melody>
+      </verse>
+      <verse
+          emoticon="8)">
+        <harmony>Saw</harmony>
+        <melody>Techno</melody>
+      </verse>
+      <verse
+          emoticon=":o">
+        <harmony>Piano</harmony>
+        <melody>Violin</melody>
+      </verse>
+      <verse
+          emoticon=":D">
+        <harmony>Piano</harmony>
+        <harmony>Guitar</harmony>
+        <melody>Sax</melody>
+        <melody>Violin</melody>
+      </verse>
+    </part>
+  </parts>
+  <rhythm compass="4/4"
+      bpm="80"
+      Style="Hip_Hop"/>
+  <info name="Gabriel Composition"
+      tone="E"
+      random_seed="42"/>
+</musicgenerator:Composition>

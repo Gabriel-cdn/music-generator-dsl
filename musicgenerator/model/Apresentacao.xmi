@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<musicgenerator:Composition
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:musicgenerator="http://musicgenerator"
+    xsi:schemaLocation="http://musicgenerator musicgenerator.ecore">
+  <structure
+      part="//@parts/@part.0 //@parts/@part.1"/>
+  <parts>
+    <part title="Estrofe 1">
+      <verse
+          emoticon="8)">
+        <harmony>Sax</harmony>
+        <melody>Violin</melody>
+      </verse>
+      <verse
+          emoticon=":x">
+        <harmony>Game</harmony>
+        <melody>Techno</melody>
+      </verse>
+    </part>
+    <part title="Refrao">
+      <verse
+          emoticon=":D">
+        <harmony>Piano</harmony>
+        <melody>Guitar</melody>
+      </verse>
+      <verse
+          emoticon="&lt;3">
+        <harmony>Piano</harmony>
+        <harmony>Guitar</harmony>
+        <melody>Sax</melody>
+      </verse>
+    </part>
+  </parts>
+  <rhythm compass="4/4"
+      Style="Disco"/>
+  <info tone="G"
+      random_seed="5"/>
+</musicgenerator:Composition>
