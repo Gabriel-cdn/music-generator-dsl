@@ -52,7 +52,7 @@ A estrutura é definida quando se organiza as partes como desejado.
 **Passos**
 - Criar Instância Dinâmica a partir de `Composition` no projeto: 
   > musicgenerator > model > musicgenerator.ecore > ... > Composition
-- Editar arquivo `.xmi` gerador informando campos mensionados na seção [Metamodelo](https://github.com/Gabriel-cdn/music-generator-dsl/new/master?readme=1#metamodelo)
+- Editar arquivo `.xmi` gerador informando campos mensionados na seção [Metamodelo](https://github.com/Gabriel-cdn/music-generator-dsl/tree/master#metamodelo)
 - Executar arquivo `generate.mtl` com `Launch Acceleo Application` em:
   > org.eclipse.acceleo.module.musicgenerator > src > org.eclipse.acceleo.module.musicgenerator.main > generate.mtl
 - Copiar código gerado para Sonic Pi e executar a música
@@ -70,7 +70,7 @@ Cada emoticon possui um conjunto de parâmetro pre-determinados:
 
 **Estatística**
 
-As notas são geradas randomicamente predefinidos pela semente de randomização mensionada no [Metamodelo](https://github.com/Gabriel-cdn/music-generator-dsl/new/master?readme=1#metamodelo).
+As notas são geradas randomicamente predefinidos pela semente de randomização mensionada no [Metamodelo](https://github.com/Gabriel-cdn/music-generator-dsl/tree/master#metamodelo).
 Vale notar que para o mesmo valor de semente sempre são geradas as mesmas notas.
 Se o emoticon está definido para o valor de 75 para a região de oitavas isso quer dizer que para todas as notas
 consideradas numa proporção de 0 a 100 as notas que estiverem na faixa 75 terão mais probabilidade de serem sorteadas.
